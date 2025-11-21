@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { Colors } from "@/constants/theme";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import React, { useState } from "react";
 import {
-  ScrollView,
-  View,
-  TouchableOpacity,
   RefreshControl,
+  ScrollView,
   Text,
-} from 'react-native';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Colors } from '@/constants/theme';
-import { ThemedView } from '@/components/themed-view';
-import { ThemedText } from '@/components/themed-text';
-import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface DayData {
   date: Date;
@@ -22,7 +22,7 @@ interface TrackingItem {
   id: string;
   label: string;
   icon: string;
-  iconFamily: 'material' | 'community';
+  iconFamily: "material" | "community";
   color: keyof typeof Colors.light;
   tracked: boolean;
   value?: string;
@@ -34,14 +34,73 @@ export default function DashboardScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const [trackingData, setTrackingData] = useState<TrackingItem[]>([
-    { id: 'sleep', label: 'Sleep', icon: 'nights-stay', iconFamily: 'material', color: 'sleep', tracked: true, value: '7h 30m' },
-    { id: 'water', label: 'Water', icon: 'water-drop', iconFamily: 'community', color: 'water', tracked: false },
-    { id: 'meals', label: 'Meals', icon: 'silverware-fork-knife', iconFamily: 'community', color: 'meals', tracked: true, value: 'Breakfast, Lunch' },
-    { id: 'activity', label: 'Activity', icon: 'directions-run', iconFamily: 'material', color: 'activity', tracked: false },
-    { id: 'stress', label: 'Stress', icon: 'flash-on', iconFamily: 'material', color: 'stress', tracked: true, value: 'Medium' },
-    { id: 'mood', label: 'Mood', icon: 'sentiment-satisfied', iconFamily: 'material', color: 'mood', tracked: false },
-    { id: 'symptoms', label: 'Symptoms', icon: 'warning', iconFamily: 'material', color: 'symptoms', tracked: false },
-    { id: 'medicine', label: 'Medicine', icon: 'pill', iconFamily: 'community', color: 'medicine', tracked: false },
+    {
+      id: "sleep",
+      label: "Sleep",
+      icon: "nights-stay",
+      iconFamily: "material",
+      color: "sleep",
+      tracked: true,
+      value: "7h 30m",
+    },
+    {
+      id: "water",
+      label: "Water",
+      icon: "water-drop",
+      iconFamily: "community",
+      color: "water",
+      tracked: false,
+    },
+    {
+      id: "meals",
+      label: "Meals",
+      icon: "silverware-fork-knife",
+      iconFamily: "community",
+      color: "meals",
+      tracked: true,
+      value: "Breakfast, Lunch",
+    },
+    {
+      id: "activity",
+      label: "Activity",
+      icon: "directions-run",
+      iconFamily: "material",
+      color: "activity",
+      tracked: false,
+    },
+    {
+      id: "stress",
+      label: "Stress",
+      icon: "flash-on",
+      iconFamily: "material",
+      color: "stress",
+      tracked: true,
+      value: "Medium",
+    },
+    {
+      id: "mood",
+      label: "Mood",
+      icon: "sentiment-satisfied",
+      iconFamily: "material",
+      color: "mood",
+      tracked: false,
+    },
+    {
+      id: "symptoms",
+      label: "Symptoms",
+      icon: "warning",
+      iconFamily: "material",
+      color: "symptoms",
+      tracked: false,
+    },
+    {
+      id: "medicine",
+      label: "Medicine",
+      icon: "pill",
+      iconFamily: "community",
+      color: "medicine",
+      tracked: false,
+    },
   ]);
 
   // Generate last 30 days
@@ -68,76 +127,57 @@ export default function DashboardScreen() {
   }, []);
 
   const toggleTracking = (id: string) => {
-    setTrackingData(prev =>
-      prev.map(item =>
+    setTrackingData((prev) =>
+      prev.map((item) =>
         item.id === id ? { ...item, tracked: !item.tracked } : item
       )
     );
   };
 
   const Icon = ({ name, family, color, size = 24 }: any) => {
-    const IconComponent = family === 'material' ? MaterialIcons : MaterialCommunityIcons;
+    const IconComponent =
+      family === "material" ? MaterialIcons : MaterialCommunityIcons;
     return <IconComponent name={name} size={size} color={color} />;
   };
 
-  const trackedCount = trackingData.filter(item => item.tracked).length;
+  const trackedCount = trackingData.filter((item) => item.tracked).length;
 
   return (
-    <ThemedView style={{ flex: 1, backgroundColor: colors.background }}>
+    <ThemedView className="flex-1 bg-white dark:bg-slate-900">
       {/* Header */}
-      <View
-        style={{
-          backgroundColor: colors.card,
-          borderBottomColor: colors.border,
-          borderBottomWidth: 1,
-          paddingHorizontal: 20,
-          paddingTop: 12,
-          paddingBottom: 16,
-        }}
-      >
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <View className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-5 pt-3 pb-4">
+        <View className="flex-row justify-between items-start">
           <View>
-            <ThemedText style={{ fontSize: 28, fontWeight: '700', marginBottom: 4 }}>
+            <ThemedText className="text-3xl font-bold mb-1">
               Migrainauts
             </ThemedText>
-            <ThemedText style={{ color: colors.darkGray, fontSize: 14 }}>
+            <ThemedText className="text-gray-600 dark:text-gray-400 text-sm">
               Track your journey
             </ThemedText>
           </View>
           <TouchableOpacity
-            style={{
-              width: 44,
-              height: 44,
-              borderRadius: 12,
-              backgroundColor: colors.lightGray,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
+            className="w-11 h-11 rounded-xl bg-gray-100 dark:bg-slate-700 justify-center items-center"
             activeOpacity={0.7}
           >
-            <MaterialIcons name="notifications-none" size={24} color={colors.primary} />
-            <View
-              style={{
-                position: 'absolute',
-                top: 8,
-                right: 8,
-                width: 8,
-                height: 8,
-                borderRadius: 4,
-                backgroundColor: colors.error,
-              }}
+            <MaterialIcons
+              name="notifications-none"
+              size={24}
+              color={colors.primary}
             />
+            <View className="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500" />
           </TouchableOpacity>
         </View>
       </View>
 
       <ScrollView
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}
       >
-        {/* Day Selector - Horizontal Scroll */}
-        <View style={{ paddingHorizontal: 20, paddingVertical: 16 }}>
+        {/* Day Selector */}
+        <View className="px-5 py-4">
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -150,40 +190,35 @@ export default function DashboardScreen() {
                 <TouchableOpacity
                   key={index}
                   activeOpacity={0.7}
-                  style={{
-                    backgroundColor: isToday ? colors.primary : colors.card,
-                    borderColor: isToday ? colors.primary : colors.border,
-                    borderWidth: 1,
-                    borderRadius: 12,
-                    width: 60,
-                    height: 80,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    paddingVertical: 8,
-                  }}
+                  className={`${
+                    isToday
+                      ? "bg-primary border-primary"
+                      : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700"
+                  } border rounded-xl w-15 h-20 justify-center items-center py-2`}
                 >
-                  <Text style={{ fontSize: 12, color: isToday ? '#fff' : colors.darkGray }}>
-                    {day.date.toLocaleDateString('en-US', { weekday: 'short' }).slice(0, 1)}
+                  <Text
+                    className={`text-xs ${
+                      isToday
+                        ? "text-white"
+                        : "text-gray-600 dark:text-gray-400"
+                    }`}
+                  >
+                    {day.date
+                      .toLocaleDateString("en-US", { weekday: "short" })
+                      .slice(0, 1)}
                   </Text>
                   <Text
-                    style={{
-                      fontSize: 16,
-                      fontWeight: '600',
-                      marginVertical: 4,
-                      color: isToday ? '#fff' : colors.text,
-                    }}
+                    className={`text-base font-semibold my-1 ${
+                      isToday ? "text-white" : "text-gray-900 dark:text-white"
+                    }`}
                   >
                     {day.date.getDate()}
                   </Text>
                   {day.hasMigraine && (
                     <View
-                      style={{
-                        width: 6,
-                        height: 6,
-                        borderRadius: 3,
-                        backgroundColor: isToday ? '#fff' : colors.error,
-                        marginTop: 2,
-                      }}
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        isToday ? "bg-white" : "bg-red-500"
+                      } mt-0.5`}
                     />
                   )}
                 </TouchableOpacity>
@@ -193,262 +228,180 @@ export default function DashboardScreen() {
         </View>
 
         {/* Stats Section */}
-        <View style={{ paddingHorizontal: 20, marginBottom: 24 }}>
-          <ThemedText style={{ fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
+        <View className="px-5 mb-7">
+          <ThemedText className="text-base font-semibold mb-3">
             Today&apos;s Overview
           </ThemedText>
-          <View style={{ flexDirection: 'row', gap: 12 }}>
-            {/* Stat Card 1 */}
-            <View
-              style={{
-                flex: 1,
-                backgroundColor: colors.card,
-                borderColor: colors.border,
-                borderWidth: 1,
-                borderRadius: 12,
-                padding: 12,
-              }}
-            >
-              <View
-                style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 8,
-                  backgroundColor: colors.success + '20',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <MaterialIcons name="calendar-today" size={20} color={colors.success} />
+          <View className="flex-row gap-3">
+            <View className="flex-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-3">
+              <View className="w-9 h-9 rounded-lg bg-green-500 bg-opacity-20 justify-center items-center">
+                <MaterialIcons
+                  name="calendar-today"
+                  size={20}
+                  color={colors.success}
+                />
               </View>
-              <ThemedText style={{ fontSize: 12, color: colors.darkGray, marginTop: 8 }}>
+              <ThemedText className="text-xs text-gray-600 dark:text-gray-400 mt-2">
                 Days since
               </ThemedText>
-              <ThemedText style={{ fontSize: 24, fontWeight: '700', marginTop: 4 }}>
-                12
-              </ThemedText>
+              <ThemedText className="text-2xl font-bold mt-1">12</ThemedText>
             </View>
 
-            {/* Stat Card 2 */}
-            <View
-              style={{
-                flex: 1,
-                backgroundColor: colors.card,
-                borderColor: colors.border,
-                borderWidth: 1,
-                borderRadius: 12,
-                padding: 12,
-              }}
-            >
-              <View
-                style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 8,
-                  backgroundColor: colors.warning + '20',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <MaterialIcons name="trending-down" size={20} color={colors.warning} />
+            <View className="flex-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-3">
+              <View className="w-9 h-9 rounded-lg bg-amber-500 bg-opacity-20 justify-center items-center">
+                <MaterialIcons
+                  name="trending-down"
+                  size={20}
+                  color={colors.warning}
+                />
               </View>
-              <ThemedText style={{ fontSize: 12, color: colors.darkGray, marginTop: 8 }}>
+              <ThemedText className="text-xs text-gray-600 dark:text-gray-400 mt-2">
                 This month
               </ThemedText>
-              <ThemedText style={{ fontSize: 24, fontWeight: '700', marginTop: 4 }}>
-                3
-              </ThemedText>
+              <ThemedText className="text-2xl font-bold mt-1">3</ThemedText>
             </View>
 
-            {/* Stat Card 3 */}
-            <View
-              style={{
-                flex: 1,
-                backgroundColor: colors.card,
-                borderColor: colors.border,
-                borderWidth: 1,
-                borderRadius: 12,
-                padding: 12,
-              }}
-            >
-              <View
-                style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 8,
-                  backgroundColor: colors.primary + '20',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <MaterialCommunityIcons name="fire" size={20} color={colors.primary} />
+            <View className="flex-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-3">
+              <View className="w-9 h-9 rounded-lg bg-purple-500 bg-opacity-20 justify-center items-center">
+                <MaterialCommunityIcons
+                  name="fire"
+                  size={20}
+                  color={colors.primary}
+                />
               </View>
-              <ThemedText style={{ fontSize: 12, color: colors.darkGray, marginTop: 8 }}>
+              <ThemedText className="text-xs text-gray-600 dark:text-gray-400 mt-2">
                 Streak
               </ThemedText>
-              <ThemedText style={{ fontSize: 24, fontWeight: '700', marginTop: 4 }}>
-                12d
-              </ThemedText>
+              <ThemedText className="text-2xl font-bold mt-1">12d</ThemedText>
             </View>
           </View>
         </View>
 
         {/* Tracking Grid */}
-        <View style={{ paddingHorizontal: 20, marginBottom: 24 }}>
-          <ThemedText style={{ fontSize: 16, fontWeight: '600', marginBottom: 16 }}>
+        <View className="px-5 mb-7">
+          <ThemedText className="text-base font-semibold mb-4">
             Quick Track ({trackedCount}/8)
           </ThemedText>
 
-          <View
-            style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              justifyContent: 'space-between',
-              gap: 12,
-            }}
-          >
-            {trackingData.map((item) => (
-              <TouchableOpacity
-                key={item.id}
-                onPress={() => toggleTracking(item.id)}
-                activeOpacity={0.7}
-                style={{
-                  width: '23%',
-                  aspectRatio: 1,
-                  backgroundColor: item.tracked ? colors[item.color] + '20' : colors.lightGray,
-                  borderColor: item.tracked ? colors[item.color] : colors.border,
-                  borderWidth: item.tracked ? 1.5 : 1,
-                  borderRadius: 12,
-                  padding: 10,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <View
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 10,
-                    backgroundColor: item.tracked ? colors[item.color] : colors.mediumGray,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginBottom: 6,
-                  }}
-                >
-                  <Icon
-                    name={item.icon}
-                    family={item.iconFamily}
-                    color={item.tracked ? '#fff' : colors.darkGray}
-                    size={22}
-                  />
-                </View>
-                <ThemedText style={{ fontSize: 11, fontWeight: '600', textAlign: 'center' }}>
-                  {item.label}
-                </ThemedText>
-                {item.tracked && item.value && (
-                  <ThemedText style={{ fontSize: 9, color: colors.darkGray, marginTop: 2, textAlign: 'center' }}>
-                    {item.value}
-                  </ThemedText>
-                )}
-              </TouchableOpacity>
-            ))}
+          <View>
+            {/* Row 1 */}
+            <View className="flex-row gap-3 mb-3">
+              {trackingData.slice(0, 2).map((item) => (
+                <TrackingCard
+                  key={item.id}
+                  item={item}
+                  colors={colors}
+                  onToggle={() => toggleTracking(item.id)}
+                  Icon={Icon}
+                />
+              ))}
+            </View>
+
+            {/* Row 2 */}
+            <View className="flex-row gap-3 mb-3">
+              {trackingData.slice(2, 4).map((item) => (
+                <TrackingCard
+                  key={item.id}
+                  item={item}
+                  colors={colors}
+                  onToggle={() => toggleTracking(item.id)}
+                  Icon={Icon}
+                />
+              ))}
+            </View>
+
+            {/* Row 3 */}
+            <View className="flex-row gap-3 mb-3">
+              {trackingData.slice(4, 6).map((item) => (
+                <TrackingCard
+                  key={item.id}
+                  item={item}
+                  colors={colors}
+                  onToggle={() => toggleTracking(item.id)}
+                  Icon={Icon}
+                />
+              ))}
+            </View>
+
+            {/* Row 4 */}
+            <View className="flex-row gap-3">
+              {trackingData.slice(6, 8).map((item) => (
+                <TrackingCard
+                  key={item.id}
+                  item={item}
+                  colors={colors}
+                  onToggle={() => toggleTracking(item.id)}
+                  Icon={Icon}
+                />
+              ))}
+            </View>
           </View>
         </View>
 
         {/* AI Insights */}
-        <View style={{ paddingHorizontal: 20, marginBottom: 24 }}>
-          <ThemedText style={{ fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
+        <View className="px-5 mb-7">
+          <ThemedText className="text-base font-semibold mb-3">
             Pattern Insights
           </ThemedText>
           <View
             style={{
-              backgroundColor: colors.primary + '10',
+              backgroundColor: colors.primary + "10",
               borderColor: colors.primary,
-              borderWidth: 1,
-              borderRadius: 12,
-              padding: 12,
-              flexDirection: 'row',
-              alignItems: 'flex-start',
-              gap: 12,
             }}
+            className="border rounded-xl p-3 flex-row items-start gap-3"
           >
             <View
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 8,
-                backgroundColor: colors.primary,
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexShrink: 0,
-              }}
+              style={{ backgroundColor: colors.primary }}
+              className="w-10 h-10 rounded-lg justify-center items-center flex-shrink-0"
             >
               <MaterialIcons name="lightbulb" size={20} color="#fff" />
             </View>
-            <View style={{ flex: 1 }}>
-              <ThemedText style={{ fontWeight: '600', fontSize: 13, marginBottom: 4 }}>
+            <View className="flex-1">
+              <ThemedText className="font-semibold text-sm mb-1">
                 Stress + Skipped Meals = Risk
               </ThemedText>
-              <ThemedText style={{ fontSize: 12, color: colors.darkGray, lineHeight: 18 }}>
-                You&apos;re 80% more likely to get migraines when stressed without eating regularly.
+              <ThemedText className="text-xs text-gray-600 dark:text-gray-400 leading-5">
+                You&apos;re 80% more likely to get migraines when stressed
+                without eating regularly.
               </ThemedText>
             </View>
           </View>
         </View>
 
         {/* Top Trigger */}
-        <View style={{ paddingHorizontal: 20, marginBottom: 24 }}>
-          <ThemedText style={{ fontSize: 16, fontWeight: '600', marginBottom: 12 }}>
+        <View className="px-5 mb-7">
+          <ThemedText className="text-base font-semibold mb-3">
             Top Trigger
           </ThemedText>
-          <View
-            style={{
-              backgroundColor: colors.card,
-              borderColor: colors.border,
-              borderWidth: 1,
-              borderRadius: 12,
-              padding: 12,
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 12,
-            }}
-          >
+          <View className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-3 flex-row items-center gap-3">
             <View
-              style={{
-                width: 48,
-                height: 48,
-                borderRadius: 10,
-                backgroundColor: colors.stress + '20',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
+              style={{ backgroundColor: colors.stress + "20" }}
+              className="w-12 h-12 rounded-lg justify-center items-center"
             >
               <MaterialIcons name="flash-on" size={24} color={colors.stress} />
             </View>
-            <View style={{ flex: 1 }}>
-              <ThemedText style={{ fontWeight: '600', fontSize: 16 }}>Stress</ThemedText>
-              <ThemedText style={{ color: colors.darkGray, fontSize: 12, marginTop: 2 }}>
+            <View className="flex-1">
+              <ThemedText className="font-semibold text-base">
+                Stress
+              </ThemedText>
+              <ThemedText className="text-gray-600 dark:text-gray-400 text-xs mt-0.5">
                 67% of your migraines
               </ThemedText>
             </View>
-            <MaterialIcons name="chevron-right" size={24} color={colors.primary} />
+            <MaterialIcons
+              name="chevron-right"
+              size={24}
+              color={colors.primary}
+            />
           </View>
         </View>
       </ScrollView>
 
-      {/* FAB - Log Migraine */}
+      {/* FAB */}
       <TouchableOpacity
+        className="absolute bottom-24 right-5 w-15 h-15 rounded-full bg-red-500 justify-center items-center"
         style={{
-          position: 'absolute',
-          bottom: 90,
-          right: 20,
-          width: 60,
-          height: 60,
-          borderRadius: 30,
-          backgroundColor: colors.error,
-          justifyContent: 'center',
-          alignItems: 'center',
-          shadowColor: '#000',
+          shadowColor: "#000",
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
           shadowRadius: 8,
@@ -459,5 +412,51 @@ export default function DashboardScreen() {
         <MaterialCommunityIcons name="headache" size={32} color="#fff" />
       </TouchableOpacity>
     </ThemedView>
+  );
+}
+
+// Tracking Card Component
+function TrackingCard({ item, colors, onToggle, Icon }: any) {
+  return (
+    <TouchableOpacity
+      onPress={onToggle}
+      activeOpacity={0.7}
+      style={{
+        flex: 1,
+        backgroundColor: item.tracked ? colors[item.color] + "20" : undefined,
+        borderColor: item.tracked ? colors[item.color] : undefined,
+        borderWidth: item.tracked ? 1.5 : 1,
+        minHeight: 120,
+      }}
+      className={`${
+        item.tracked
+          ? "border-opacity-50"
+          : "bg-gray-100 dark:bg-slate-700 border-gray-200 dark:border-slate-700"
+      } rounded-xl p-3 justify-center items-center`}
+    >
+      <View
+        style={{
+          backgroundColor: item.tracked
+            ? colors[item.color]
+            : colors.mediumGray,
+        }}
+        className="w-11 h-11 rounded-lg justify-center items-center mb-2"
+      >
+        <Icon
+          name={item.icon}
+          family={item.iconFamily}
+          color={item.tracked ? "#fff" : colors.darkGray}
+          size={24}
+        />
+      </View>
+      <ThemedText className="text-xs font-semibold text-center">
+        {item.label}
+      </ThemedText>
+      {item.tracked && item.value && (
+        <ThemedText className="text-xs text-gray-600 dark:text-gray-400 mt-1 text-center">
+          {item.value}
+        </ThemedText>
+      )}
+    </TouchableOpacity>
   );
 }

@@ -28,6 +28,19 @@ module.exports = {
       },
       spacing: {
         '4.5': '1.125rem',
+        '15': '3.75rem',
+        '20': '5rem',
+        '24': '6rem',
+      },
+      width: {
+        '15': '3.75rem',
+      },
+      height: {
+        '15': '3.75rem',
+        '20': '5rem',
+      },
+      minHeight: {
+        '30': '7.5rem',
       },
     },
   },
