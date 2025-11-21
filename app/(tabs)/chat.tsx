@@ -109,9 +109,13 @@ export default function ChatScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1, backgroundColor: colors.background }}
     >
-      <View style={{ backgroundColor: colors.card, borderBottomColor: colors.border, borderBottomWidth: 1, paddingHorizontal: 20, paddingVertical: 16 }}>
-        <ThemedText style={{ fontSize: 24, fontWeight: '700' }}>AI Assistant</ThemedText>
-        <ThemedText style={{ color: colors.darkGray, fontSize: 14, marginTop: 4 }}>Ask anything about your migraines</ThemedText>
+      <View className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-5 pt-14 pb-4">
+        <ThemedText className="text-3xl font-bold mb-1">
+          AI Assistant
+        </ThemedText>
+        <ThemedText className="text-gray-600 dark:text-gray-400 text-sm">
+          Ask anything about your migraines
+        </ThemedText>
       </View>
 
       <ScrollView
@@ -153,7 +157,7 @@ export default function ChatScreen() {
                 <ThemedText
                   style={{
                     color: message.sender === 'user' ? '#fff' : colors.text,
-                    fontSize: 14,
+                    fontSize: 16,
                   }}
                 >
                   {message.text}
@@ -206,10 +210,11 @@ export default function ChatScreen() {
             style={[
               {
                 flex: 1,
-                paddingVertical: 10,
+                paddingVertical: 14,
                 paddingHorizontal: 4,
                 maxHeight: 100,
                 color: colors.text,
+                fontSize: 16,
               },
             ]}
             placeholder="Ask me anything..."
@@ -222,6 +227,7 @@ export default function ChatScreen() {
           <TouchableOpacity
             onPress={() => sendMessage(inputText)}
             disabled={!inputText.trim() || isAIThinking}
+            style={{ justifyContent: 'flex-end', paddingBottom: 12 }}
           >
             <MaterialIcons
               name="send"

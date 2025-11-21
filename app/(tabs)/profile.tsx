@@ -52,9 +52,11 @@ export default function ProfileScreen() {
 
   return (
     <ThemedView style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
-        <ThemedText type="title">Profile</ThemedText>
-        <ThemedText style={{ color: colors.darkGray, marginTop: 4 }}>
+      <View className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-5 pt-14 pb-4">
+        <ThemedText className="text-3xl font-bold mb-1">
+          Profile
+        </ThemedText>
+        <ThemedText className="text-gray-600 dark:text-gray-400 text-sm">
           Manage your account
         </ThemedText>
       </View>

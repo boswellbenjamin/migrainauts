@@ -40,9 +40,13 @@ export default function TrackScreen() {
 
   return (
     <ThemedView style={{ flex: 1, backgroundColor: colors.background }}>
-      <View style={{ backgroundColor: colors.card, borderBottomColor: colors.border, borderBottomWidth: 1, paddingHorizontal: 20, paddingVertical: 16 }}>
-        <ThemedText style={{ fontSize: 24, fontWeight: '700' }}>Quick Track</ThemedText>
-        <ThemedText style={{ color: colors.darkGray, fontSize: 14, marginTop: 4 }}>Log your daily activities</ThemedText>
+      <View className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-5 pt-14 pb-4">
+        <ThemedText className="text-3xl font-bold mb-1">
+          Quick Track
+        </ThemedText>
+        <ThemedText className="text-gray-600 dark:text-gray-400 text-sm">
+          Log your daily activities
+        </ThemedText>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 20, paddingTop: 16 }}>

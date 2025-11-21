@@ -2,19 +2,22 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
+import {
+  generateDailyInsight,
+  generateDetailedInsights,
+} from "@/lib/api/replicate";
+import { useData } from "@/lib/context/DataContext";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import React, { useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Modal,
   RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
-  ActivityIndicator,
 } from "react-native";
-import { useData } from "@/lib/context/DataContext";
-import { generateDailyInsight, generateDetailedInsights } from "@/lib/api/replicate";
 
 interface DayData {
   date: Date;
@@ -37,7 +40,8 @@ export default function DashboardScreen() {
   const colors = Colors[colorScheme];
   const [refreshing, setRefreshing] = useState(false);
   const [showAIDetails, setShowAIDetails] = useState(false);
-  const [dailyInsight, setDailyInsight] = useState<string>("Loading insight...");
+  const [dailyInsight, setDailyInsight] =
+    useState<string>("Loading insight...");
   const [detailedInsight, setDetailedInsight] = useState<string>("");
   const [loadingInsight, setLoadingInsight] = useState(true);
   const [loadingDetailedInsight, setLoadingDetailedInsight] = useState(false);
@@ -152,20 +156,28 @@ export default function DashboardScreen() {
     console.log("Dashboard - Data check:", {
       dayDataLength: dayData?.length,
       migrainesLength: migraines?.length,
-      loadingInsight
+      loadingInsight,
     });
 
-    if (dayData && dayData.length > 0 && migraines && migraines.length > 0 && loadingInsight) {
+    if (
+      dayData &&
+      dayData.length > 0 &&
+      migraines &&
+      migraines.length > 0 &&
+      loadingInsight
+    ) {
       console.log("Generating daily insight...");
       setLoadingInsight(false);
       generateDailyInsight(dayData, migraines)
-        .then(insight => {
+        .then((insight) => {
           console.log("Insight received:", insight.substring(0, 100));
           setDailyInsight(insight);
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("Error generating insight:", err);
-          setDailyInsight("Track your patterns to receive personalized insights!");
+          setDailyInsight(
+            "Track your patterns to receive personalized insights!"
+          );
         });
     } else if (!loadingInsight) {
       // If data is not available but we're not loading, show a message
@@ -194,37 +206,52 @@ export default function DashboardScreen() {
   // Calculate real statistics
   const stats = React.useMemo(() => {
     if (!migraines || migraines.length === 0) {
-      return { daysSinceLast: 0, thisMonth: 0, topTrigger: "None", topTriggerPercent: 0 };
+      return {
+        daysSinceLast: 0,
+        thisMonth: 0,
+        topTrigger: "None",
+        topTriggerPercent: 0,
+      };
     }
 
     const lastMigraine = migraines[migraines.length - 1];
     const daysSinceLast = Math.floor(
-      (new Date().getTime() - new Date(lastMigraine.date).getTime()) / (1000 * 60 * 60 * 24)
+      (new Date().getTime() - new Date(lastMigraine.date).getTime()) /
+        (1000 * 60 * 60 * 24)
     );
 
     const now = new Date();
-    const thisMonth = migraines.filter(m => {
+    const thisMonth = migraines.filter((m) => {
       const date = new Date(m.date);
-      return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+      return (
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear()
+      );
     }).length;
 
     // Count triggers
     const triggerCounts = new Map<string, number>();
-    migraines.forEach(m => {
-      m.triggers.forEach(t => {
+    migraines.forEach((m) => {
+      m.triggers.forEach((t) => {
         triggerCounts.set(t, (triggerCounts.get(t) || 0) + 1);
       });
     });
 
-    const topTrigger = Array.from(triggerCounts.entries())
-      .sort((a, b) => b[1] - a[1])[0];
+    const topTrigger = Array.from(triggerCounts.entries()).sort(
+      (a, b) => b[1] - a[1]
+    )[0];
 
     const topTriggerText = topTrigger ? topTrigger[0] : "None";
     const topTriggerPercent = topTrigger
       ? Math.round((topTrigger[1] / migraines.length) * 100)
       : 0;
 
-    return { daysSinceLast, thisMonth, topTrigger: topTriggerText, topTriggerPercent };
+    return {
+      daysSinceLast,
+      thisMonth,
+      topTrigger: topTriggerText,
+      topTriggerPercent,
+    };
   }, [migraines]);
 
   // Show loading state
@@ -356,34 +383,52 @@ export default function DashboardScreen() {
             }}
             className="border rounded-2xl p-4"
           >
-            <View className="flex-row items-start gap-3 mb-3">
+            <View className="flex-row items-start gap-4 mb-3">
               <View
                 style={{ backgroundColor: colors.primary }}
-                className="w-10 h-10 rounded-full justify-center items-center flex-shrink-0"
+                className="w-10 h-10 rounded-full justify-center items-center flex-shrink-0 mt-1"
               >
                 <MaterialIcons name="psychology" size={22} color="#fff" />
               </View>
-              <View className="flex-1">
-                <ThemedText className="font-semibold text-sm mb-1">
-                  Today&apos;s Focus
-                </ThemedText>
-                <ThemedText className="text-xs text-gray-600 dark:text-gray-400 leading-5">
-                  {dailyInsight}
-                </ThemedText>
-              </View>
+              <ThemedText
+                className="font-bold text-lg flex-1"
+                style={{ color: colors.primary }}
+              >
+                Today&apos;s Focus
+              </ThemedText>
             </View>
+            <ThemedText className="text-base text-gray-700 dark:text-gray-300 leading-7 mb-4">
+              {dailyInsight
+                .replace(/^#+\s*/gm, "")
+                .replace(/\*\*(.*?)\*\*/g, "$1")
+                .replace(/\*(.*?)\*/g, "$1")
+                .replace(/__(.*?)__/g, "$1")
+                .replace(/_(.*?)_/g, "$1")
+                .replace(/^[-*•]\s/gm, "")
+                .trim()}
+            </ThemedText>
             <TouchableOpacity
-              className="flex-row items-center gap-1 self-start"
+              className="flex-row items-center gap-1"
               onPress={async () => {
                 setShowAIDetails(true);
-                if (!detailedInsight && !loadingDetailedInsight && dayData && migraines) {
+                if (
+                  !detailedInsight &&
+                  !loadingDetailedInsight &&
+                  dayData &&
+                  migraines
+                ) {
                   setLoadingDetailedInsight(true);
                   try {
-                    const detailed = await generateDetailedInsights(dayData, migraines);
+                    const detailed = await generateDetailedInsights(
+                      dayData,
+                      migraines
+                    );
                     setDetailedInsight(detailed);
                   } catch (error) {
                     console.error("Error loading detailed insights:", error);
-                    setDetailedInsight("Unable to load detailed insights. Please try again later.");
+                    setDetailedInsight(
+                      "Unable to load detailed insights. Please try again later."
+                    );
                   } finally {
                     setLoadingDetailedInsight(false);
                   }
@@ -396,7 +441,11 @@ export default function DashboardScreen() {
               >
                 Read more
               </ThemedText>
-              <MaterialIcons name="arrow-forward" size={14} color={colors.primary} />
+              <MaterialIcons
+                name="arrow-forward"
+                size={14}
+                color={colors.primary}
+              />
             </TouchableOpacity>
           </View>
         </View>
@@ -434,7 +483,9 @@ export default function DashboardScreen() {
                   color={colors.success}
                 />
               </View>
-              <ThemedText className="text-2xl font-bold">{stats.daysSinceLast}</ThemedText>
+              <ThemedText className="text-2xl font-bold">
+                {stats.daysSinceLast}
+              </ThemedText>
               <ThemedText className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                 Days since last
               </ThemedText>
@@ -448,7 +499,9 @@ export default function DashboardScreen() {
                   color={colors.warning}
                 />
               </View>
-              <ThemedText className="text-2xl font-bold">{stats.thisMonth}</ThemedText>
+              <ThemedText className="text-2xl font-bold">
+                {stats.thisMonth}
+              </ThemedText>
               <ThemedText className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                 This month
               </ThemedText>
@@ -487,7 +540,7 @@ export default function DashboardScreen() {
 
       {/* FAB */}
       <TouchableOpacity
-        className="absolute bottom-24 right-5 w-15 h-15 rounded-full bg-red-500 justify-center items-center"
+        className="absolute bottom-32 right-5 w-15 h-15 rounded-full bg-red-500 justify-center items-center"
         style={{
           shadowColor: "#000",
           shadowOffset: { width: 0, height: 4 },
@@ -545,78 +598,113 @@ export default function DashboardScreen() {
                   }}
                   className="border rounded-2xl p-5"
                 >
-                  <View className="flex-row items-start gap-3 mb-4">
-                    <View
-                      style={{ backgroundColor: colors.primary }}
-                      className="w-12 h-12 rounded-full justify-center items-center flex-shrink-0"
-                    >
-                      <MaterialIcons name="psychology" size={26} color="#fff" />
-                    </View>
-                    <View className="flex-1">
-                      <ThemedText className="font-bold text-lg mb-4">
+                  <View className="w-full mb-4 px-2">
+                    <View className="flex-row items-center gap-3 mb-6">
+                      <View
+                        style={{ backgroundColor: colors.primary }}
+                        className="w-12 h-12 rounded-full justify-center items-center flex-shrink-0"
+                      >
+                        <MaterialIcons
+                          name="psychology"
+                          size={26}
+                          color="#fff"
+                        />
+                      </View>
+                      <ThemedText className="font-bold text-3xl flex-1">
                         AI Analysis
                       </ThemedText>
-                      {detailedInsight ? (
-                        detailedInsight.split('\n').map((line, index) => {
-                          // Skip empty lines
-                          if (!line.trim()) return null;
+                    </View>
+                    {detailedInsight ? (
+                      <View className="w-full">
+                        {detailedInsight.split("\n\n").map((section, idx) => {
+                          const cleanSection = section
+                            .replace(/^#+\s*/gm, "")
+                            .replace(/\*\*(.*?)\*\*/g, "$1")
+                            .replace(/\*(.*?)\*/g, "$1")
+                            .replace(/__(.*?)__/g, "$1")
+                            .replace(/_(.*?)_/g, "$1")
+                            .trim();
 
-                          // Remove all markdown formatting
-                          let cleanLine = line
-                            .replace(/\*\*(.*?)\*\*/g, '$1') // Remove **bold**
-                            .replace(/\*(.*?)\*/g, '$1')     // Remove *italic*
-                            .replace(/__(.*?)__/g, '$1')     // Remove __bold__
-                            .replace(/_(.*?)_/g, '$1');      // Remove _italic_
+                          if (!cleanSection) return null;
 
-                          // Handle headers (lines starting with ##, ###, or numbers like 1., 2.)
-                          if (line.match(/^#+\s/) || line.match(/^\d+\.\s/)) {
-                            const text = cleanLine.replace(/^#+\s*/, '').replace(/^\d+\.\s*/, '');
+                          const lines = cleanSection
+                            .split("\n")
+                            .filter((l) => l.trim());
+
+                          // First line is always treated as potential header if short
+                          const firstLine = lines[0];
+                          const isLikelyHeader =
+                            firstLine.length < 60 ||
+                            firstLine.match(/^[A-Z][a-z\s]+$/);
+
+                          // If only one line or short first line with more content
+                          if (isLikelyHeader && lines.length > 1) {
                             return (
-                              <ThemedText
-                                key={index}
-                                className="font-bold text-base mb-2 mt-4"
-                              >
-                                {text}
-                              </ThemedText>
-                            );
-                          }
-
-                          // Handle bullet points (lines starting with -, *, or •)
-                          if (line.match(/^[-*•]\s/)) {
-                            const text = cleanLine.replace(/^[-*•]\s*/, '');
-                            return (
-                              <View key={index} className="flex-row mb-2 ml-2">
-                                <ThemedText className="text-sm text-gray-700 dark:text-gray-300 mr-2">
-                                  •
+                              <View key={idx} className="mb-8 mt-4">
+                                <ThemedText
+                                  className="text-3xl font-bold mb-1"
+                                  style={{ color: colors.primary }}
+                                >
+                                  {firstLine}
                                 </ThemedText>
-                                <ThemedText className="flex-1 text-sm text-gray-700 dark:text-gray-300 leading-6">
-                                  {text}
-                                </ThemedText>
+                                <View
+                                  className="h-1.5 mb-5 rounded-full w-20"
+                                  style={{
+                                    backgroundColor: colors.primary,
+                                  }}
+                                />
+                                {lines.slice(1).map((line, lineIdx) => (
+                                  <ThemedText
+                                    key={lineIdx}
+                                    className="text-base text-gray-600 dark:text-gray-400 leading-6 mb-3 font-normal"
+                                  >
+                                    {line.trim()}
+                                  </ThemedText>
+                                ))}
                               </View>
                             );
                           }
 
-                          // Regular paragraphs
+                          // Single line header
+                          if (isLikelyHeader && lines.length === 1) {
+                            return (
+                              <View key={idx} className="mb-6 mt-5">
+                                <ThemedText
+                                  className="text-3xl font-bold"
+                                  style={{ color: colors.primary }}
+                                >
+                                  {firstLine}
+                                </ThemedText>
+                                <View
+                                  className="h-1.5 mt-2 rounded-full w-20"
+                                  style={{
+                                    backgroundColor: colors.primary,
+                                  }}
+                                />
+                              </View>
+                            );
+                          }
+
+                          // Regular paragraph (longer first line, not a header)
                           return (
                             <ThemedText
-                              key={index}
-                              className="text-sm text-gray-700 dark:text-gray-300 leading-6 mb-3"
+                              key={idx}
+                              className="text-base text-gray-600 dark:text-gray-400 leading-6 mb-6 font-normal"
                             >
-                              {cleanLine}
+                              {cleanSection}
                             </ThemedText>
                           );
-                        })
-                      ) : (
-                        <ThemedText className="text-sm text-gray-700 dark:text-gray-300">
-                          Loading detailed insights...
-                        </ThemedText>
-                      )}
-                    </View>
+                        })}
+                      </View>
+                    ) : (
+                      <ThemedText className="text-base text-gray-600 dark:text-gray-400">
+                        Loading detailed insights...
+                      </ThemedText>
+                    )}
                   </View>
                 </View>
               )}
             </View>
-
           </ScrollView>
         </ThemedView>
       </Modal>
@@ -636,9 +724,7 @@ function TrackingCard({ item, colors, onToggle, Icon }: any) {
         borderWidth: 1,
       }}
       className={`${
-        item.tracked
-          ? ""
-          : "bg-white dark:bg-slate-800"
+        item.tracked ? "" : "bg-white dark:bg-slate-800"
       } rounded-xl p-3 flex-row items-center gap-3`}
     >
       {/* Icon */}
@@ -660,9 +746,7 @@ function TrackingCard({ item, colors, onToggle, Icon }: any) {
 
       {/* Content */}
       <View className="flex-1">
-        <ThemedText className="text-sm font-semibold">
-          {item.label}
-        </ThemedText>
+        <ThemedText className="text-sm font-semibold">{item.label}</ThemedText>
         {item.tracked && item.value && (
           <ThemedText className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
             {item.value}
@@ -677,9 +761,17 @@ function TrackingCard({ item, colors, onToggle, Icon }: any) {
 
       {/* Checkmark or Arrow */}
       {item.tracked ? (
-        <MaterialIcons name="check-circle" size={20} color={colors[item.color]} />
+        <MaterialIcons
+          name="check-circle"
+          size={20}
+          color={colors[item.color]}
+        />
       ) : (
-        <MaterialIcons name="chevron-right" size={20} color={colors.mediumGray} />
+        <MaterialIcons
+          name="chevron-right"
+          size={20}
+          color={colors.mediumGray}
+        />
       )}
     </TouchableOpacity>
   );

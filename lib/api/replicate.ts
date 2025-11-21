@@ -57,10 +57,10 @@ Recent migraine data (last 7 days):
 
 Provide a detailed analysis with:
 1. Overall pattern summary (2-3 sentences)
-2. Key findings (3 specific bullet points)
+2. Key findings (3 specific points)
 3. Today's recommendations (3 actionable items)
 
-Be empathetic, supportive, and specific. Format with clear sections.`;
+IMPORTANT: Use plain text only. NO markdown symbols, NO special formatting, NO hyphens or bullets. Just separate each section with a blank line. Be empathetic, supportive, and specific.`;
 
   return await callReplicate(prompt);
 }
