@@ -1,16 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, View, TouchableOpacity, Switch } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { MaterialIcons } from '@expo/vector-icons';
+import NotificationService from '@/lib/services/notification-service';
 
 export default function ProfileScreen() {
+  const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme];
   const [notifications, setNotifications] = useState(true);
   const [darkMode, setDarkMode] = useState(colorScheme === 'dark');
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const loadUnreadCount = () => {
+      const count = NotificationService.getUnreadCount();
+      setUnreadCount(count);
+    };
+
+    loadUnreadCount();
+    const interval = setInterval(loadUnreadCount, 5000); // Update every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
 
   const profileInfo = [
     { label: 'Name', value: 'Alex Johnson' },
@@ -27,6 +43,7 @@ export default function ProfileScreen() {
     {
       title: 'App Settings',
       items: [
+        { icon: 'notifications', label: 'Notifications', subtitle: 'Manage alerts and reminders', route: '/notification-settings' },
         { icon: 'dark-mode', label: 'Appearance', subtitle: 'Light / Dark mode' },
         { icon: 'language', label: 'Language', subtitle: 'English' },
         { icon: 'accessibility', label: 'Accessibility', subtitle: 'Text size, contrast' },
@@ -53,12 +70,42 @@ export default function ProfileScreen() {
   return (
     <ThemedView style={[styles.container, { backgroundColor: colors.background }]}>
       <View className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-5 pt-14 pb-4">
-        <ThemedText className="text-3xl font-bold mb-1">
-          Profile
-        </ThemedText>
-        <ThemedText className="text-gray-600 dark:text-gray-400 text-sm">
-          Manage your account
-        </ThemedText>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View style={{ flex: 1 }}>
+            <ThemedText className="text-3xl font-bold mb-1">
+              Profile
+            </ThemedText>
+            <ThemedText className="text-gray-600 dark:text-gray-400 text-sm">
+              Manage your account
+            </ThemedText>
+          </View>
+          <TouchableOpacity
+            onPress={() => router.push('/notifications')}
+            style={{ position: 'relative' }}
+          >
+            <MaterialIcons name="notifications" size={28} color={colors.text} />
+            {unreadCount > 0 && (
+              <View
+                style={{
+                  position: 'absolute',
+                  top: -4,
+                  right: -4,
+                  backgroundColor: colors.error,
+                  borderRadius: 10,
+                  minWidth: 20,
+                  height: 20,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  paddingHorizontal: 4,
+                }}
+              >
+                <ThemedText style={{ color: 'white', fontSize: 11, fontWeight: '700' }}>
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </ThemedText>
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
@@ -164,6 +211,11 @@ export default function ProfileScreen() {
             {section.items.map((item, itemIndex) => (
               <TouchableOpacity
                 key={itemIndex}
+                onPress={() => {
+                  if ((item as any).route) {
+                    router.push((item as any).route);
+                  }
+                }}
                 style={[
                   styles.settingRow,
                   {

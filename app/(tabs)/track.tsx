@@ -4,7 +4,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function TrackScreen() {
   const colorScheme = useColorScheme();
@@ -15,28 +15,66 @@ export default function TrackScreen() {
     {
       id: 'vitals',
       label: 'Vitals',
-      icon: 'favorite',
-      items: ['Sleep', 'Water', 'Heart Rate'],
+      icon: 'heart-pulse',
+      iconFamily: 'community' as const,
+      color: '#ef4444',
+      bgColor: '#fee2e2',
+      items: [
+        { name: 'Sleep', icon: 'sleep', iconFamily: 'community' },
+        { name: 'Water', icon: 'water', iconFamily: 'community' },
+        { name: 'Heart Rate', icon: 'heart-pulse', iconFamily: 'community' },
+      ],
     },
     {
       id: 'lifestyle',
       label: 'Lifestyle',
-      icon: 'fitness-center',
-      items: ['Exercise', 'Stress Level', 'Meditation'],
+      icon: 'run',
+      iconFamily: 'community' as const,
+      color: '#3b82f6',
+      bgColor: '#dbeafe',
+      items: [
+        { name: 'Exercise', icon: 'dumbbell', iconFamily: 'community' },
+        { name: 'Stress Level', icon: 'emoticon-stressed', iconFamily: 'community' },
+        { name: 'Meditation', icon: 'meditation', iconFamily: 'community' },
+      ],
     },
     {
       id: 'nutrition',
       label: 'Nutrition',
-      icon: 'restaurant',
-      items: ['Breakfast', 'Lunch', 'Dinner', 'Snacks'],
+      icon: 'food-apple',
+      iconFamily: 'community' as const,
+      color: '#10b981',
+      bgColor: '#d1fae5',
+      items: [
+        { name: 'Breakfast', icon: 'coffee', iconFamily: 'community' },
+        { name: 'Lunch', icon: 'food', iconFamily: 'community' },
+        { name: 'Dinner', icon: 'silverware-fork-knife', iconFamily: 'community' },
+        { name: 'Snacks', icon: 'food-apple', iconFamily: 'community' },
+      ],
     },
     {
       id: 'symptoms',
       label: 'Symptoms',
-      icon: 'warning',
-      items: ['Pain', 'Nausea', 'Sensitivity'],
+      icon: 'alert-circle',
+      iconFamily: 'community' as const,
+      color: '#f59e0b',
+      bgColor: '#fef3c7',
+      items: [
+        { name: 'Pain Level', icon: 'flash', iconFamily: 'community' },
+        { name: 'Nausea', icon: 'emoticon-sick', iconFamily: 'community' },
+        { name: 'Light Sensitivity', icon: 'weather-sunny', iconFamily: 'community' },
+        { name: 'Sound Sensitivity', icon: 'volume-high', iconFamily: 'community' },
+      ],
     },
   ];
+
+  const IconComponent = ({ iconFamily, name, size, color }: any) => {
+    return iconFamily === 'community' ? (
+      <MaterialCommunityIcons name={name} size={size} color={color} />
+    ) : (
+      <MaterialIcons name={name} size={size} color={color} />
+    );
+  };
 
   return (
     <ThemedView style={{ flex: 1, backgroundColor: colors.background }}>
@@ -49,23 +87,101 @@ export default function TrackScreen() {
         </ThemedText>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 20, paddingTop: 16 }}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 20, paddingTop: 20 }}
+      >
         {categories.map(category => (
-          <View key={category.id} style={{ marginBottom: 12 }}>
-            <TouchableOpacity onPress={() => setExpandedCategory(expandedCategory === category.id ? null : category.id)} style={{ backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, gap: 12 }}>
-                <MaterialIcons name={category.icon as any} size={24} color={colors.primary} />
-                <ThemedText style={{ fontWeight: '600', flex: 1 }}>{category.label}</ThemedText>
+          <View key={category.id} className="mb-4">
+            <TouchableOpacity
+              onPress={() => setExpandedCategory(expandedCategory === category.id ? null : category.id)}
+              className="bg-white dark:bg-slate-800 rounded-2xl p-4"
+              style={{
+                borderWidth: 1,
+                borderColor: expandedCategory === category.id ? category.color : colors.border,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.05,
+                shadowRadius: 8,
+                elevation: 2,
+              }}
+              activeOpacity={0.7}
+            >
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center gap-4 flex-1">
+                  <View
+                    className="w-12 h-12 rounded-xl items-center justify-center"
+                    style={{
+                      backgroundColor: colorScheme === 'dark' ? category.color + '30' : category.bgColor
+                    }}
+                  >
+                    <IconComponent
+                      iconFamily={category.iconFamily}
+                      name={category.icon}
+                      size={24}
+                      color={category.color}
+                    />
+                  </View>
+                  <View className="flex-1">
+                    <ThemedText className="text-lg font-semibold">{category.label}</ThemedText>
+                    <ThemedText className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                      {category.items.length} items
+                    </ThemedText>
+                  </View>
+                </View>
+                <MaterialIcons
+                  name={expandedCategory === category.id ? 'expand-less' : 'expand-more'}
+                  size={28}
+                  color={category.color}
+                />
               </View>
-              <MaterialIcons name={expandedCategory === category.id ? 'expand-less' : 'expand-more'} size={24} color={colors.darkGray} />
             </TouchableOpacity>
 
             {expandedCategory === category.id && (
-              <View style={{ backgroundColor: colors.card, borderLeftColor: colors.border, borderRightColor: colors.border, borderBottomColor: colors.border, borderLeftWidth: 1, borderRightWidth: 1, borderBottomWidth: 1, borderBottomLeftRadius: 12, borderBottomRightRadius: 12 }}>
+              <View
+                className="bg-white dark:bg-slate-800 rounded-2xl mt-2 overflow-hidden"
+                style={{
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.05,
+                  shadowRadius: 8,
+                  elevation: 2,
+                }}
+              >
                 {category.items.map((item, index) => (
-                  <TouchableOpacity key={item} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, paddingHorizontal: 16, borderBottomColor: colors.border, borderBottomWidth: index < category.items.length - 1 ? 1 : 0 }}>
-                    <ThemedText>{item}</ThemedText>
-                    <MaterialIcons name="add" size={20} color={colors.primary} />
+                  <TouchableOpacity
+                    key={item.name}
+                    className="flex-row items-center justify-between p-4"
+                    style={{
+                      borderBottomWidth: index < category.items.length - 1 ? 1 : 0,
+                      borderBottomColor: colors.border,
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <View className="flex-row items-center gap-3 flex-1">
+                      <View
+                        className="w-10 h-10 rounded-lg items-center justify-center"
+                        style={{
+                          backgroundColor: colorScheme === 'dark' ? category.color + '20' : category.bgColor
+                        }}
+                      >
+                        <IconComponent
+                          iconFamily={item.iconFamily}
+                          name={item.icon}
+                          size={20}
+                          color={category.color}
+                        />
+                      </View>
+                      <ThemedText className="text-base font-medium">{item.name}</ThemedText>
+                    </View>
+                    <View
+                      className="w-9 h-9 rounded-lg items-center justify-center"
+                      style={{ backgroundColor: category.color }}
+                    >
+                      <MaterialIcons name="add" size={22} color="white" />
+                    </View>
                   </TouchableOpacity>
                 ))}
               </View>

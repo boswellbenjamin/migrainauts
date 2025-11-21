@@ -169,3 +169,6 @@ export interface MigraineStats {
   averageDuration?: number;
   trend: "improving" | "stable" | "worsening";
 }
+
+// Re-export notification types
+export * from './notifications';

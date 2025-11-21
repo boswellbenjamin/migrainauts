@@ -7,7 +7,9 @@ import {
   generateDetailedInsights,
 } from "@/lib/api/replicate";
 import { useData } from "@/lib/context/DataContext";
+import NotificationService from "@/lib/services/notification-service";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -36,10 +38,12 @@ interface TrackingItem {
 }
 
 export default function DashboardScreen() {
+  const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme];
   const [refreshing, setRefreshing] = useState(false);
   const [showAIDetails, setShowAIDetails] = useState(false);
+  const [showMigrainModal, setShowMigrainModal] = useState(false);
   const [dailyInsight, setDailyInsight] =
     useState<string>("Loading insight...");
   const [detailedInsight, setDetailedInsight] = useState<string>("");
@@ -48,7 +52,67 @@ export default function DashboardScreen() {
   const dayScrollRef = useRef<ScrollView>(null);
 
   // Get real data from context
-  const { dayData, migraines, loading, error, refreshData } = useData();
+  const { dayData, migraines, loading, error, refreshData, addMigraine } = useData();
+
+  // Open migraine tracking modal
+  const openMigrainModal = () => {
+    setShowMigrainModal(true);
+  };
+
+  // Test notification function - sends immediate notification only
+  const sendMockNotification = async () => {
+    // Send immediate notification for demo purposes
+    await NotificationService.sendNotification({
+      type: "predictive_warning",
+      priority: "high",
+      title: "⚠️ Migraine Risk Detected",
+      body: "You're following your usual Saturday pattern - migraine expected in 3 hours",
+      details: {
+        explanation:
+          "On Saturdays at 12:00 you usually get migraines when you haven't been active in the morning and have drunk little water. Today you're following the same pattern.",
+        confidence: 0.85,
+        dataPoints: [
+          "Previous events: 4 times",
+          "Expected time: in 3 hours",
+          "Active factor: you haven't been active",
+          "Active factor: you've drunk little water",
+        ],
+        triggers: [
+          { name: "Low activity", active: true },
+          { name: "Little water", active: true },
+          { name: "Poor sleep", active: false },
+          { name: "High stress", active: false },
+        ],
+        actions: [
+          { id: "1", title: "Take a 20 minute walk now", type: "primary" },
+          { id: "2", title: "Drink 2 glasses of water", type: "secondary" },
+          { id: "3", title: "Take preventive medication", type: "secondary" },
+          { id: "4", title: "Use Relivia device", type: "secondary" },
+        ],
+        timeline: [
+          { time: "07:00", activity: "Woke up - 6.5h sleep", isNormal: true },
+          {
+            time: "08:00",
+            activity: "Breakfast - coffee and sandwich",
+            isNormal: true,
+          },
+          { time: "09:00", activity: "No activity", isNormal: false },
+          { time: "10:00", activity: "Still no activity", isNormal: false },
+          {
+            time: "11:00",
+            activity: "Little water drunk (1 glass)",
+            isNormal: false,
+          },
+        ],
+      },
+      patternData: {
+        dayOfWeek: "Saturday",
+        timeOfDay: "noon",
+        factors: ["you haven't been active", "you've drunk little water"],
+      },
+    });
+    // Just send notification, don't navigate anywhere
+  };
 
   const [trackingData, setTrackingData] = useState<TrackingItem[]>([
     {
@@ -63,7 +127,7 @@ export default function DashboardScreen() {
     {
       id: "water",
       label: "Water",
-      icon: "water-drop",
+      icon: "water",
       iconFamily: "community",
       color: "water",
       tracked: false,
@@ -297,17 +361,31 @@ export default function DashboardScreen() {
               Track your journey
             </ThemedText>
           </View>
-          <TouchableOpacity
-            className="w-11 h-11 rounded-xl bg-gray-100 dark:bg-slate-700 justify-center items-center"
-            activeOpacity={0.7}
-          >
-            <MaterialIcons
-              name="notifications-none"
-              size={24}
-              color={colors.primary}
+          <View className="flex-row gap-2 items-center">
+            {/* Hidden demo trigger - large invisible button with transparent background */}
+            <TouchableOpacity
+              onPress={sendMockNotification}
+              style={{
+                width: 44,
+                height: 44,
+                backgroundColor: "rgba(0,0,0,0.01)", // Nearly invisible but still touchable
+              }}
+              activeOpacity={0.1}
             />
-            <View className="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500" />
-          </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => router.push("/notifications")}
+              className="w-11 h-11 rounded-xl bg-gray-100 dark:bg-slate-700 justify-center items-center"
+              activeOpacity={0.7}
+            >
+              <MaterialIcons
+                name="notifications-none"
+                size={24}
+                color={colors.primary}
+              />
+              <View className="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500" />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 
@@ -538,10 +616,19 @@ export default function DashboardScreen() {
         </View>
       </ScrollView>
 
-      {/* FAB */}
+      {/* FAB - Floating Migraine Button */}
       <TouchableOpacity
-        className="absolute bottom-32 right-5 w-15 h-15 rounded-full bg-red-500 justify-center items-center"
+        onPress={openMigrainModal}
         style={{
+          position: "absolute",
+          bottom: 24,
+          right: 20,
+          width: 60,
+          height: 60,
+          borderRadius: 30,
+          backgroundColor: "#ef4444",
+          justifyContent: "center",
+          alignItems: "center",
           shadowColor: "#000",
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
@@ -705,6 +792,166 @@ export default function DashboardScreen() {
                 </View>
               )}
             </View>
+          </ScrollView>
+        </ThemedView>
+      </Modal>
+
+      {/* Migraine Tracking Modal */}
+      <Modal
+        visible={showMigrainModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowMigrainModal(false)}
+      >
+        <ThemedView className="flex-1 bg-white dark:bg-slate-900">
+          {/* Modal Header */}
+          <View className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-5 pt-14 pb-4">
+            <View className="flex-row justify-between items-center">
+              <ThemedText className="text-2xl font-bold">
+                Log Migraine
+              </ThemedText>
+              <TouchableOpacity
+                onPress={() => setShowMigrainModal(false)}
+                className="w-10 h-10 rounded-full bg-gray-100 dark:bg-slate-700 justify-center items-center"
+                activeOpacity={0.7}
+              >
+                <MaterialIcons name="close" size={24} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
+          >
+            {/* Severity Section */}
+            <View className="mb-6">
+              <ThemedText className="text-lg font-semibold mb-3">
+                Severity
+              </ThemedText>
+              <View className="flex-row gap-3">
+                {['Mild', 'Moderate', 'Severe'].map((severity) => (
+                  <TouchableOpacity
+                    key={severity}
+                    className="flex-1 rounded-xl p-4 border-2"
+                    style={{
+                      borderColor: colors.primary,
+                      backgroundColor: colors.card,
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <ThemedText className="text-center font-semibold">
+                      {severity}
+                    </ThemedText>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            {/* Time Section */}
+            <View className="mb-6">
+              <ThemedText className="text-lg font-semibold mb-3">
+                When did it start?
+              </ThemedText>
+              <TouchableOpacity
+                className="rounded-xl p-4 border"
+                style={{
+                  borderColor: colors.border,
+                  backgroundColor: colors.card,
+                }}
+                activeOpacity={0.7}
+              >
+                <ThemedText className="text-center">
+                  {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </ThemedText>
+              </TouchableOpacity>
+            </View>
+
+            {/* Common Symptoms */}
+            <View className="mb-6">
+              <ThemedText className="text-lg font-semibold mb-3">
+                Symptoms
+              </ThemedText>
+              <View className="flex-row flex-wrap gap-2">
+                {['Pain', 'Nausea', 'Light Sensitivity', 'Sound Sensitivity', 'Aura', 'Dizziness'].map((symptom) => (
+                  <TouchableOpacity
+                    key={symptom}
+                    className="rounded-full px-4 py-2 border"
+                    style={{
+                      borderColor: colors.border,
+                      backgroundColor: colors.card,
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <ThemedText className="text-sm">
+                      {symptom}
+                    </ThemedText>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            {/* Possible Triggers */}
+            <View className="mb-6">
+              <ThemedText className="text-lg font-semibold mb-3">
+                Possible Triggers
+              </ThemedText>
+              <View className="flex-row flex-wrap gap-2">
+                {['Stress', 'Poor Sleep', 'Weather', 'Food', 'Dehydration', 'Screen Time'].map((trigger) => (
+                  <TouchableOpacity
+                    key={trigger}
+                    className="rounded-full px-4 py-2 border"
+                    style={{
+                      borderColor: colors.border,
+                      backgroundColor: colors.card,
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <ThemedText className="text-sm">
+                      {trigger}
+                    </ThemedText>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            {/* Notes Section */}
+            <View className="mb-6">
+              <ThemedText className="text-lg font-semibold mb-3">
+                Notes (Optional)
+              </ThemedText>
+              <View
+                className="rounded-xl p-4 border"
+                style={{
+                  borderColor: colors.border,
+                  backgroundColor: colors.card,
+                  minHeight: 100,
+                }}
+              >
+                <ThemedText className="text-gray-400">
+                  Add any additional details...
+                </ThemedText>
+              </View>
+            </View>
+
+            {/* Save Button */}
+            <TouchableOpacity
+              onPress={() => setShowMigrainModal(false)}
+              className="rounded-2xl p-5"
+              style={{
+                backgroundColor: colors.primary,
+                shadowColor: colors.primary,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 8,
+                elevation: 6,
+              }}
+              activeOpacity={0.8}
+            >
+              <ThemedText className="text-white text-center text-lg font-bold">
+                Save Migraine Log
+              </ThemedText>
+            </TouchableOpacity>
           </ScrollView>
         </ThemedView>
       </Modal>
