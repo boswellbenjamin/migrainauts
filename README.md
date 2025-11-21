@@ -1,320 +1,111 @@
-# Migrainauts - Migraine Tracking App
+# Migrainauts
 
-A clean, professional, and user-friendly mobile application for tracking migraine patterns, triggers, and symptoms. Built with React Native, Expo, and TypeScript.
+An AI-powered migraine prediction and prevention app built during a hackathon. Track your migraines, discover patterns, and receive intelligent alerts before migraines occur.
 
-## 🎯 Project Overview
+## Core Features
 
-Migrainauts is a comprehensive migraine tracking application designed to help users understand their migraine patterns through data-driven insights and AI-powered recommendations. The app focuses on:
+### Smart Pattern Detection
 
-- **Quick Tracking**: Log daily health metrics in seconds
-- **Pattern Recognition**: AI analyzes your data to identify triggers
-- **Predictive Alerts**: Get warnings before migraines are likely to occur
-- **Detailed Logging**: Comprehensive migraine logging with severity, symptoms, and triggers
-- **AI Chat Assistant**: Ask questions about your data and get personalized insights
+- AI-powered analysis of your migraine triggers
+- Detects patterns based on day of week, time of day, and lifestyle factors
+- Confidence scoring for each identified pattern
 
-## 🏗️ Project Structure
+### Predictive Alerts
 
-```
-migrainauts/
-├── app/
-│   ├── (tabs)/
-│   │   ├── _layout.tsx          # Tab navigation setup
-│   │   ├── index.tsx            # Dashboard (home screen)
-│   │   ├── track.tsx            # Quick tracking screen
-│   │   ├── insights.tsx         # Pattern analysis screen
-│   │   ├── chat.tsx             # AI assistant screen
-│   │   ├── profile.tsx          # User profile & settings
-│   │   └── log-migraine.tsx     # Detailed migraine logging
-│   ├── _layout.tsx
-│   └── modal.tsx
-├── components/
-│   ├── themed-text.tsx
-│   ├── themed-view.tsx
-│   └── ui/
-│       └── ...
-├── constants/
-│   └── theme.ts                 # Color palette & design tokens
-├── hooks/
-│   ├── use-color-scheme.ts
-│   └── use-theme-color.ts
-└── assets/
-    └── images/
-```
+- **Migraine Risk Detection**: Get warnings 2-4 hours before expected migraines
+- **Early Pattern Warning**: Alerts 6-8 hours before when triggers are active
+- **Positive Reinforcement**: Celebrate when you break your patterns
+- Customizable notification preferences with Do Not Disturb support
 
-## 🎨 Design System
+### Comprehensive Tracking
 
-### Color Palette
+- Log migraines with start/end times and severity
+- Track lifestyle factors: activity, sleep, water intake, stress levels
+- Daily insights dashboard showing patterns and trends
 
-**Primary Colors:**
-- Primary Purple: `#6B5FFF`
-- Success Green: `#10B981`
-- Warning Orange: `#F59E0B`
-- Error Red: `#EF4444`
-- Danger: `#DC2626`
+### AI Chat Assistant
 
-**Tracking Categories (each has unique color):**
-- Sleep: `#3B82F6` (Blue)
-- Water: `#06B6D4` (Cyan)
-- Meals: `#8B5CF6` (Purple)
-- Activity: `#EC4899` (Pink)
-- Stress: `#EF4444` (Red)
-- Mood: `#F59E0B` (Yellow)
-- Symptoms: `#DC2626` (Dark Red)
-- Medicine: `#A855F7` (Violet)
+- Get personalized advice about your migraine patterns
+- Powered by Replicate AI integration
 
-### Design Principles
+### Relivia Device Support
 
-1. **UX First**: Every component prioritizes user experience
-2. **Clean & Professional**: Minimal but purposeful design
-3. **Playful**: Subtle animations and interactions keep users engaged
-4. **Minimal Emoji**: Only essential icons, no excessive emoji use
-5. **Consistent Spacing**: 8px and 16px base units for rhythm
-6. **Accessible**: Readable contrast, clear touch targets (min 44x44pt)
+- Ready for integration with Relivia device
+- Device pairing and usage tracking
 
-## 📱 Screens
+## Tech Stack
 
-### 1. Dashboard (Home)
-- **Day Selector**: Horizontal scroll through past 30 days
-- **Today's Stats**: Days since migraine, migraines this month, streak
-- **Quick Track Grid**: 8 quick-access tracking items (2x4 grid)
-- **Pattern Insights**: AI-generated insights about user patterns
-- **Top Trigger**: Visual card showing user's primary migraine trigger
-- **FAB Button**: Red floating action button to log migraines
+- **Frontend**: React Native + Expo (iOS, Android, Web)
+- **UI**: NativeWind (Tailwind CSS for React Native)
+- **State Management**: React Context API
+- **Storage**: AsyncStorage (local device storage)
+- **AI**: Replicate API integration
+- **Notifications**: Expo Notifications API
 
-### 2. Quick Track
-- **Category-based Tracking**: Organized by categories (Vitals, Lifestyle, Nutrition, Symptoms)
-- **Expandable Categories**: Tap to reveal specific tracking items
-- **Flexible Logging**: Quick tap or long press for detailed entry
-
-### 3. Pattern Analysis (Insights)
-- **Time Period Selector**: Week / Month / Year
-- **Calendar Heatmap**: Visual calendar showing migraine intensity
-- **Top Triggers**: Ranked list with percentage correlations
-- **Key Insights**: AI-powered pattern discoveries
-
-### 4. AI Chat Assistant
-- **Conversational Interface**: Chat UI with user (right, blue) and AI (left, gray) messages
-- **Quick Reply Buttons**: Pre-suggested questions for first-time users
-- **Natural Conversation**: Asks about data, triggers, and recommendations
-
-### 5. User Profile
-- **Profile Information**: Name, age, migraine history
-- **Quick Stats**: Migraines, days tracked, current streak
-- **Personal Settings**: Notifications, appearance, language
-- **Data Management**: Export, backup, clear data options
-- **Support**: FAQ, bug reports, about page
-
-### 6. Log Migraine (Modal)
-**5-Step Flow:**
-1. **Confirm**: Are you having a migraine now?
-2. **Time**: When did it start?
-3. **Intensity**: Rate severity (1-10)
-4. **Symptoms**: Select symptoms (multi-select)
-5. **Success**: Confirmation with summary
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
-- Node.js 16+ and npm/yarn
+
+- Node.js 16+
 - Expo CLI: `npm install -g expo-cli`
-- iOS Simulator or Android Emulator (or Expo Go app on phone)
 
 ### Installation
 
 ```bash
-# Navigate to project directory
+# Clone the repository
+git clone https://github.com/yourusername/migrainauts.git
 cd migrainauts
 
 # Install dependencies
 npm install
 
-# Start the dev server
+# Start the app
 npm start
 
-# Run on iOS simulator
-npm run ios
-
-# Run on Android emulator
-npm run android
-
-# Run on web
-npm run web
+# Run on iOS/Android/Web
+npm run ios     # iOS simulator
+npm run android # Android emulator
+npm run web     # Web browser
 ```
 
-### First Time Setup
+## Key Screens
 
-1. Start the app - you'll see the Dashboard
-2. Tap the red FAB button to log your first migraine
-3. Follow the 5-step wizard to complete logging
-4. Explore the other tabs to familiarize yourself with the features
-5. Visit Profile to customize preferences
+| Screen            | Purpose                                                         |
+| ----------------- | --------------------------------------------------------------- |
+| **Dashboard**     | Overview of today's tracking and quick access to common actions |
+| **Track**         | Log migraines and daily lifestyle factors                       |
+| **Insights**      | View pattern detection results and historical data              |
+| **Chat**          | Get AI-powered personalized advice                              |
+| **Notifications** | View all alerts with detailed explanations                      |
+| **Settings**      | Configure notification preferences                              |
 
-## 🔄 Navigation
+## How It Works
 
-**Bottom Tab Bar (5 Tabs):**
-1. **Home** - Dashboard with daily overview
-2. **Track** - Quick logging interface
-3. **Patterns** - Analytics and insights
-4. **Chat** - AI assistant
-5. **Profile** - Settings and profile management
+1. **Log Your Data**: Track migraines and daily factors (sleep, activity, water intake, stress)
+2. **AI Analysis**: The app analyzes your data to identify migraine patterns
+3. **Smart Alerts**: Receive notifications when conditions match your patterns
+4. **Prevention**: Act on suggestions to prevent or minimize migraines
 
-**Modal Flows:**
-- Tap FAB button → Log Migraine wizard (5 steps)
-- Various settings screens accessible from Profile tab
+## Development
 
-## 💡 Key Features
+- Built with **TypeScript** for type safety
+- **Expo Router** for file-based routing
+- **TailwindCSS** for styling
+- Clean architecture with services, hooks, and context providers
 
-### Dashboard
-- ✅ Day selector with migraine indicators
-- ✅ Quick stats cards (days since migraine, monthly count, streak)
-- ✅ 8-item quick track grid with visual feedback
-- ✅ AI insights panel
-- ✅ Top trigger card
-- ✅ Pull-to-refresh functionality
-- ✅ Red FAB for migraine logging
+## Notes
 
-### Quick Track
-- ✅ Category-based organization
-- ✅ Expandable/collapsible categories
-- ✅ One-tap quick logging
-- ✅ Long-press for detailed entry
+- This is a hackathon project with room for enhancement
+- All data is stored locally on device (no cloud sync currently)
+- Pattern detection runs on-device without external API calls
+- Notifications respect device notification permissions
 
-### Insights
-- ✅ Calendar heatmap visualization
-- ✅ Top triggers with percentages
-- ✅ Time period selector (week/month/year)
-- ✅ AI pattern detection
+## Contributing
 
-### Chat
-- ✅ Conversational message interface
-- ✅ Quick reply suggestions
-- ✅ Simulated AI responses (ready for Claude API integration)
+Contributions welcome! Feel free to open issues and pull requests.
 
-### Profile
-- ✅ User information display
-- ✅ Quick stats overview
-- ✅ Preference toggles (notifications, dark mode)
-- ✅ Settings organized in sections
-- ✅ Data export/backup options
+## License
 
-## 🔮 Future Features
+MIT License. Feel free to use this project as you wish.
 
-Based on the Obsidian vault specifications:
-
-- [ ] Voice input for AI chat
-- [ ] Migraine Rewind (48-hour timeline analysis)
-- [ ] Community features (stories, tips, Q&A)
-- [ ] Calendar integration (Google Calendar, iCloud)
-- [ ] Weather integration (SMHI/OpenWeather)
-- [ ] Gamification (badges, achievements, challenges)
-- [ ] Apple Watch & Wear OS apps
-- [ ] Smart notifications & AI predictions
-- [ ] Educational library/wiki
-- [ ] Advanced analytics (PDF reports, trends)
-
-## 🎨 Styling Guide
-
-### Component Patterns
-
-**Cards:**
-```tsx
-style={[
-  styles.card,
-  { 
-    backgroundColor: colors.card,
-    borderColor: colors.border 
-  }
-]}
-```
-
-**Buttons:**
-- Primary (CTA): `backgroundColor: colors.primary`
-- Secondary: `backgroundColor: colors.card, borderColor: colors.border`
-- Danger: `backgroundColor: colors.error`
-
-**Typography:**
-- Title: `type="title"` (fontSize: 28, fontWeight: '700')
-- Subtitle: `type="subtitle"` (fontSize: 16, fontWeight: '600')
-- Body: Default (fontSize: 14)
-- Small: `fontSize: 12`
-
-## 📦 Dependencies
-
-Key packages:
-- `expo-router` - Navigation
-- `react-native-reanimated` - Animations
-- `expo-haptics` - Haptic feedback
-- `@expo/vector-icons` - Material Icons
-
-## 🔐 State Management (Future)
-
-Currently using React `useState` hooks. For scaling, consider:
-- Redux Toolkit + Redux Persist
-- Zustand
-- React Context API
-
-## 💾 Data Storage (Future)
-
-Currently using mock data. For production:
-- SQLite (local storage)
-- Firebase Firestore (cloud sync)
-- Realm (offline-first)
-
-## 🤖 AI Integration (Future)
-
-Ready for integration with:
-- Claude API (Anthropic)
-- GPT-4 (OpenAI)
-- Mistral API
-
-System prompt template already prepared in Obsidian vault.
-
-## 🧪 Testing
-
-```bash
-# Run linter
-npm run lint
-
-# Type check
-npx tsc --noEmit
-```
-
-## 📝 Git Workflow
-
-```bash
-# Feature branch
-git checkout -b feature/feature-name
-
-# Commit with conventional commits
-git commit -m "feat: add new feature"
-
-# Push and create PR
-git push origin feature/feature-name
-```
-
-## 🚨 Known Limitations
-
-- Mock data only (no backend yet)
-- AI chat is simulated (needs API integration)
-- No offline persistence yet
-- No image/voice storage
-- No cross-device sync yet
-
-## 📞 Support
-
-For questions or issues:
-1. Check the FAQ in Profile → Settings
-2. Create a GitHub issue
-3. Contact the development team
-
-## 📄 License
-
-[Your License Here]
-
-## 👥 Team
-
-Built for Hackathon 2025 by the Migrainauts team
-
----
-
-**Happy tracking! Let's help people understand their migraines better. 🧠💜**
+Built during a hackathon to help people predict and prevent migraines before they happen.
