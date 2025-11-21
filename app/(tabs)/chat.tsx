@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   ScrollView,
   View,
@@ -6,11 +6,14 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import { ThemedText } from '@/components/themed-text';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useData } from '@/lib/context/DataContext';
+import { chatWithAI, ReplicateMessage } from '@/lib/api/replicate';
 
 interface Message {
   id: string;
@@ -22,25 +25,36 @@ interface Message {
 export default function ChatScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme];
+  const { migraines, dayData, loading: dataLoading } = useData();
+  const scrollViewRef = useRef<ScrollView>(null);
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: 'Hi! I can help you understand your migraine patterns and answer questions about your data.',
+      text: 'Hi! I can help you understand your migraine patterns and answer questions about your data. What would you like to know?',
       sender: 'ai',
       timestamp: new Date(),
     },
   ]);
   const [inputText, setInputText] = useState('');
+  const [isAIThinking, setIsAIThinking] = useState(false);
 
   const quickReplies = [
-    'How many migraines this month?',
-    'What&apos;s my biggest trigger?',
-    'Will I get a migraine today?',
-    'What should I do now?',
+    'When was my last migraine?',
+    "What's my biggest trigger?",
+    'Show me my patterns',
+    'What should I track today?',
   ];
 
-  const sendMessage = (text: string) => {
-    if (!text.trim()) return;
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+  }, [messages]);
+
+  const sendMessage = async (text: string) => {
+    if (!text.trim() || isAIThinking) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -51,17 +65,43 @@ export default function ChatScreen() {
 
     setMessages(prev => [...prev, userMessage]);
     setInputText('');
+    setIsAIThinking(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      // Build conversation history for context
+      const conversationHistory: ReplicateMessage[] = messages
+        .filter(m => m.sender !== 'ai' || m.id !== '1') // Exclude initial greeting
+        .map(m => ({
+          role: m.sender === 'user' ? 'user' : 'assistant',
+          content: m.text,
+        }));
+
+      // Call real AI with user's migraine data
+      const aiResponse = await chatWithAI(text, conversationHistory, {
+        migraines,
+        dayData,
+      });
+
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: 'This is a simulated AI response. In production, this would connect to Claude API.',
+        text: aiResponse,
         sender: 'ai',
         timestamp: new Date(),
       };
+
       setMessages(prev => [...prev, aiMessage]);
-    }, 500);
+    } catch (error) {
+      console.error('Error getting AI response:', error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "I'm sorry, I'm having trouble responding right now. Please try again.",
+        sender: 'ai',
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsAIThinking(false);
+    }
   };
 
   return (
@@ -75,6 +115,7 @@ export default function ChatScreen() {
       </View>
 
       <ScrollView
+        ref={scrollViewRef}
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: 12 }}
         showsVerticalScrollIndicator={false}
@@ -120,6 +161,31 @@ export default function ChatScreen() {
               </View>
             </View>
           ))}
+
+          {/* AI Thinking Indicator */}
+          {isAIThinking && (
+            <View style={{ flexDirection: 'row', marginBottom: 12 }}>
+              <View
+                style={{
+                  maxWidth: '80%',
+                  backgroundColor: colors.card,
+                  borderColor: colors.border,
+                  borderWidth: 1,
+                  paddingHorizontal: 12,
+                  paddingVertical: 10,
+                  borderRadius: 12,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+              >
+                <ActivityIndicator size="small" color={colors.primary} />
+                <ThemedText style={{ color: colors.darkGray, fontSize: 14 }}>
+                  Thinking...
+                </ThemedText>
+              </View>
+            </View>
+          )}
         </View>
       </ScrollView>
 
@@ -153,8 +219,15 @@ export default function ChatScreen() {
             multiline
             maxLength={500}
           />
-          <TouchableOpacity onPress={() => sendMessage(inputText)} disabled={!inputText.trim()}>
-            <MaterialIcons name="send" size={20} color={inputText.trim() ? colors.primary : colors.mediumGray} />
+          <TouchableOpacity
+            onPress={() => sendMessage(inputText)}
+            disabled={!inputText.trim() || isAIThinking}
+          >
+            <MaterialIcons
+              name="send"
+              size={20}
+              color={inputText.trim() && !isAIThinking ? colors.primary : colors.mediumGray}
+            />
           </TouchableOpacity>
         </View>
       </View>
