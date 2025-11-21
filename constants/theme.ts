@@ -5,25 +5,65 @@
 
 import { Platform } from 'react-native';
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+const tintColorLight = '#6B5FFF'; // Primary purple
+const tintColorDark = '#9B8AFF';
 
 export const Colors = {
   light: {
     text: '#11181C',
-    background: '#fff',
+    background: '#FAFBFD',
     tint: tintColorLight,
     icon: '#687076',
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
+    // Migraine app specific
+    primary: '#6B5FFF',
+    success: '#10B981',
+    warning: '#F59E0B',
+    error: '#EF4444',
+    danger: '#DC2626',
+    card: '#FFFFFF',
+    border: '#E5E7EB',
+    lightGray: '#F3F4F6',
+    mediumGray: '#D1D5DB',
+    darkGray: '#6B7280',
+    // Tracking colors
+    sleep: '#3B82F6',
+    water: '#06B6D4',
+    meals: '#8B5CF6',
+    activity: '#EC4899',
+    stress: '#EF4444',
+    mood: '#F59E0B',
+    symptoms: '#DC2626',
+    medicine: '#A855F7',
   },
   dark: {
     text: '#ECEDEE',
-    background: '#151718',
+    background: '#0F1419',
     tint: tintColorDark,
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
+    // Migraine app specific
+    primary: '#9B8AFF',
+    success: '#059669',
+    warning: '#D97706',
+    error: '#F87171',
+    danger: '#EF4444',
+    card: '#1F2937',
+    border: '#374151',
+    lightGray: '#2D3748',
+    mediumGray: '#4B5563',
+    darkGray: '#9CA3AF',
+    // Tracking colors
+    sleep: '#60A5FA',
+    water: '#22D3EE',
+    meals: '#A78BFA',
+    activity: '#F472B6',
+    stress: '#F87171',
+    mood: '#FBBF24',
+    symptoms: '#F87171',
+    medicine: '#C084FC',
   },
 };
 
