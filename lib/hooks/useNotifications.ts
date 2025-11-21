@@ -84,10 +84,7 @@ export function useNotifications() {
 
   // Check patterns every hour
   useEffect(() => {
-    // Initial check
-    checkPatterns();
-
-    // Set up interval to check every hour
+    // Set up interval to check every hour (skip initial check to avoid startup notification)
     checkInterval.current = setInterval(() => {
       checkPatterns();
     }, 60 * 60 * 1000); // 1 hour

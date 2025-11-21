@@ -6,31 +6,31 @@ Migrainauts features an intelligent notification system that uses AI-powered pat
 
 ### 6 Types of Notifications
 
-1. **Prediktiv Varning (Predictive Warning)** - High Priority
+1. **Predictive Warning** - High Priority
    - Sent 2-4 hours before expected migraine
    - Based on detected patterns (day, time, conditions)
    - Includes actionable suggestions
    - Shows confidence level and data points
 
-2. **Tidigt Mönster (Early Pattern)** - Medium Priority
+2. **Early Pattern** - Medium Priority
    - Sent 6-8 hours before potential migraine
    - Alerts when 3/4 trigger factors are active
    - Progress bar showing active triggers
 
-3. **Positiv Förstärkning (Positive Reinforcement)** - Low Priority
+3. **Positive Reinforcement** - Low Priority
    - Sent when user breaks usual pattern successfully
    - Encourages continued good behavior
    - Can be shared anonymously
 
-4. **Check-in Påminnelse (Check-in Reminder)**
+4. **Check-in Reminder**
    - Customizable frequency (1-3x per day)
    - Reminds user to update data
 
-5. **Glömt att Tracka (Tracking Reminder)**
+5. **Tracking Reminder**
    - Sent 2 hours after usual tracking time
    - Specific to missed tracking type
 
-6. **Väder Varning (Weather Warning)**
+6. **Weather Warning**
    - Alerts on barometric pressure changes
    - Only if weather tracking is enabled
 
@@ -38,7 +38,7 @@ Migrainauts features an intelligent notification system that uses AI-powered pat
 
 The system analyzes:
 - **Day of Week**: Specific days when migraines occur
-- **Time of Day**: Morning, middag, kväll, natt
+- **Time of Day**: Morning, afternoon, evening, night
 - **Activity Level**: Low activity before migraine
 - **Sleep Quality**: Poor sleep correlation
 - **Water Intake**: Dehydration patterns

@@ -23,12 +23,12 @@
 ✅ Test notification button with 5-second delay
 
 **Notification Types:**
-1. **Prediktiv Varning** (High Priority) - 2-4 hours before expected migraine
-2. **Tidigt Mönster** (Medium Priority) - 6-8 hours before, when 3/4 triggers active
-3. **Positiv Förstärkning** (Low Priority) - When pattern is successfully broken
-4. **Check-in Påminnelse** - Customizable frequency reminders
-5. **Glömt att Tracka** - When tracking is missed
-6. **Väder Varning** - Weather-based alerts (ready for API integration)
+1. **Predictive Warning** (High Priority) - 2-4 hours before expected migraine
+2. **Early Pattern** (Medium Priority) - 6-8 hours before, when 3/4 triggers active
+3. **Positive Reinforcement** (Low Priority) - When pattern is successfully broken
+4. **Check-in Reminder** - Customizable frequency reminders
+5. **Tracking Reminder** - When tracking is missed
+6. **Weather Warning** - Weather-based alerts (ready for API integration)
 
 **Pattern Detection Features:**
 - Analyzes day of week, time of day, activity level, sleep, water, stress

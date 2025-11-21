@@ -130,33 +130,6 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Quick Stats */}
-        <View style={styles.statsSection}>
-          {[
-            { label: 'Migraines', value: '23', icon: 'warning' },
-            { label: 'Days Tracked', value: '126', icon: 'calendar-today' },
-            { label: 'Streak', value: '12d', icon: 'local-fire-department' },
-          ].map((stat, index) => (
-            <View
-              key={index}
-              style={[
-                styles.statItem,
-                { backgroundColor: colors.card, borderColor: colors.border },
-              ]}
-            >
-              <MaterialIcons name={stat.icon as any} size={20} color={colors.primary} />
-              <View style={{ marginLeft: 8 }}>
-                <ThemedText style={{ fontSize: 12, color: colors.darkGray }}>
-                  {stat.label}
-                </ThemedText>
-                <ThemedText style={{ fontWeight: '700', fontSize: 16 }}>
-                  {stat.value}
-                </ThemedText>
-              </View>
-            </View>
-          ))}
-        </View>
-
         {/* Profile Info */}
         <View style={styles.section}>
           <ThemedText type="subtitle" style={{ marginBottom: 12 }}>

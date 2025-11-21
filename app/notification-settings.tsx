@@ -30,8 +30,8 @@ export default function NotificationSettingsScreen() {
     await NotificationService.sendNotification({
       type: 'check_in',
       priority: 'medium',
-      title: '🔔 Testnotifikation',
-      body: 'Detta är en testnotifikation från Migrainauts',
+      title: '🔔 Test Notification',
+      body: 'This is a test notification from Migrainauts',
     });
   };
 
@@ -77,7 +77,7 @@ export default function NotificationSettingsScreen() {
           <TouchableOpacity onPress={() => router.back()} style={{ marginRight: 12 }}>
             <MaterialIcons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
-          <ThemedText className="text-2xl font-bold">Notifikationsinställningar</ThemedText>
+          <ThemedText className="text-2xl font-bold">Notification Settings</ThemedText>
         </View>
       </View>
 
@@ -86,8 +86,8 @@ export default function NotificationSettingsScreen() {
         <View className="mt-6 mb-2">
           <SettingRow
             icon="notifications"
-            title="Notifikationer"
-            description="Aktivera eller inaktivera alla notifikationer"
+            title="Notifications"
+            description="Enable or disable all notifications"
             value={settings.enabled}
             onValueChange={(value) => updateSetting('enabled', value)}
           />
@@ -96,53 +96,53 @@ export default function NotificationSettingsScreen() {
         {/* Notification Types */}
         <View className="mt-6">
           <ThemedText className="text-xs font-semibold text-gray-600 dark:text-gray-400 px-5 mb-2">
-            NOTIFIKATIONSTYPER
+            NOTIFICATION TYPES
           </ThemedText>
 
           <SettingRow
             icon="warning"
-            title="Prediktiva varningar"
-            description="Varningar när ett migränmönster upptäcks"
+            title="Predictive Warnings"
+            description="Alerts when a migraine pattern is detected"
             value={settings.predictiveWarnings}
             onValueChange={(value) => updateSetting('predictiveWarnings', value)}
           />
 
           <SettingRow
             icon="lightbulb"
-            title="Tidiga mönster"
-            description="Notifikationer om tidiga tecken på migrän"
+            title="Early Patterns"
+            description="Notifications about early signs of migraines"
             value={settings.earlyPatterns}
             onValueChange={(value) => updateSetting('earlyPatterns', value)}
           />
 
           <SettingRow
             icon="celebration"
-            title="Positiv förstärkning"
-            description="Uppmuntran när du bryter negativa mönster"
+            title="Positive Reinforcement"
+            description="Encouragement when you break negative patterns"
             value={settings.positiveReinforcement}
             onValueChange={(value) => updateSetting('positiveReinforcement', value)}
           />
 
           <SettingRow
             icon="notification-important"
-            title="Check-in påminnelser"
-            description="Påminnelser om att uppdatera din data"
+            title="Check-in Reminders"
+            description="Reminders to update your data"
             value={settings.checkInReminders}
             onValueChange={(value) => updateSetting('checkInReminders', value)}
           />
 
           <SettingRow
             icon="edit-note"
-            title="Tracking påminnelser"
-            description="Påminnelser om missade trackings"
+            title="Tracking Reminders"
+            description="Reminders about missed tracking"
             value={settings.trackingReminders}
             onValueChange={(value) => updateSetting('trackingReminders', value)}
           />
 
           <SettingRow
             icon="cloud"
-            title="Vädervarningar"
-            description="Notifikationer om väderförändringar som kan påverka dig"
+            title="Weather Warnings"
+            description="Notifications about weather changes that could affect you"
             value={settings.weatherWarnings}
             onValueChange={(value) => updateSetting('weatherWarnings', value)}
           />
@@ -151,11 +151,11 @@ export default function NotificationSettingsScreen() {
         {/* Check-in Frequency */}
         <View className="mt-6">
           <ThemedText className="text-xs font-semibold text-gray-600 dark:text-gray-400 px-5 mb-2">
-            CHECK-IN FREKVENS
+            CHECK-IN FREQUENCY
           </ThemedText>
 
           <View className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-5 py-4">
-            <ThemedText className="text-base font-semibold mb-3">Antal gånger per dag</ThemedText>
+            <ThemedText className="text-base font-semibold mb-3">Times per day</ThemedText>
             <View style={{ flexDirection: 'row', gap: 12 }}>
               {[1, 2, 3].map(freq => (
                 <TouchableOpacity
@@ -183,13 +183,13 @@ export default function NotificationSettingsScreen() {
         {/* Do Not Disturb */}
         <View className="mt-6">
           <ThemedText className="text-xs font-semibold text-gray-600 dark:text-gray-400 px-5 mb-2">
-            TYST LÄGE
+            DO NOT DISTURB
           </ThemedText>
 
           <SettingRow
             icon="do-not-disturb"
-            title="Aktivera tyst läge"
-            description="Stör ej under vissa timmar (kritiska varningar tillåts)"
+            title="Enable Do Not Disturb"
+            description="No notifications during certain hours (critical alerts allowed)"
             value={settings.doNotDisturbEnabled}
             onValueChange={(value) => updateSetting('doNotDisturbEnabled', value)}
           />
@@ -199,7 +199,7 @@ export default function NotificationSettingsScreen() {
               <View style={{ flexDirection: 'row', gap: 12 }}>
                 <View style={{ flex: 1 }}>
                   <ThemedText className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                    Från
+                    From
                   </ThemedText>
                   <View className="bg-gray-100 dark:bg-slate-700 rounded-xl p-3">
                     <ThemedText className="text-center font-semibold">
@@ -209,7 +209,7 @@ export default function NotificationSettingsScreen() {
                 </View>
                 <View style={{ flex: 1 }}>
                   <ThemedText className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                    Till
+                    To
                   </ThemedText>
                   <View className="bg-gray-100 dark:bg-slate-700 rounded-xl p-3">
                     <ThemedText className="text-center font-semibold">
@@ -225,17 +225,17 @@ export default function NotificationSettingsScreen() {
         {/* Max Notifications */}
         <View className="mt-6 mb-6">
           <ThemedText className="text-xs font-semibold text-gray-600 dark:text-gray-400 px-5 mb-2">
-            AVANCERAT
+            ADVANCED
           </ThemedText>
 
           <View className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-5 py-4">
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <View style={{ flex: 1 }}>
                 <ThemedText className="text-base font-semibold mb-1">
-                  Max notifikationer per dag
+                  Max notifications per day
                 </ThemedText>
                 <ThemedText className="text-sm text-gray-600 dark:text-gray-400">
-                  Begränsa antalet notifikationer
+                  Limit the number of notifications
                 </ThemedText>
               </View>
               <View className="bg-gray-100 dark:bg-slate-700 rounded-xl px-4 py-2">
@@ -254,7 +254,7 @@ export default function NotificationSettingsScreen() {
           >
             <MaterialIcons name="send" size={20} color="white" style={{ marginRight: 8 }} />
             <ThemedText className="text-white font-semibold text-base">
-              Skicka testnotifikation
+              Send Test Notification
             </ThemedText>
           </TouchableOpacity>
         </View>
@@ -269,11 +269,11 @@ export default function NotificationSettingsScreen() {
                 color={colors.primary}
                 style={{ marginRight: 8, marginTop: 2 }}
               />
-              <ThemedText className="text-sm font-semibold flex-1">Om notifikationer</ThemedText>
+              <ThemedText className="text-sm font-semibold flex-1">About Notifications</ThemedText>
             </View>
             <ThemedText className="text-xs text-gray-600 dark:text-gray-400 leading-5">
-              Migrainauts använder AI för att analysera dina mönster och skicka personliga notifikationer.
-              Våra prediktiva varningar kan hjälpa dig att förebygga migrän genom att upptäcka mönster tidigt.
+              Migrainauts uses AI to analyze your patterns and send personalized notifications.
+              Our predictive warnings can help you prevent migraines by detecting patterns early.
             </ThemedText>
           </View>
         </View>

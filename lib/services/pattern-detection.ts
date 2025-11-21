@@ -152,15 +152,15 @@ export class PatternDetectionService {
     const notification: Omit<NotificationData, 'id' | 'sentTime' | 'read'> = {
       type: 'predictive_warning',
       priority: 'high',
-      title: '⚠️ Migränrisk upptäckt',
-      body: `Ditt vanliga mönster för ${dayName.toLowerCase()} formar sig...`,
+      title: '⚠️ Migraine Risk Detected',
+      body: `Your typical ${dayName.toLowerCase()} pattern is forming...`,
       details: {
-        explanation: `På ${dayName.toLowerCase()} ${pattern.timeOfDay} brukar du få migrän när ${activeConditions.join(' och ')}. Idag följer du samma mönster.`,
+        explanation: `On ${dayName.toLowerCase()} during ${pattern.timeOfDay} you usually get migraines when ${activeConditions.join(' and ')}. Today you're following the same pattern.`,
         confidence: pattern.confidence,
         dataPoints: [
-          `Tidigare händelser: ${pattern.occurrences} gånger`,
-          `Förväntad tid: om ${Math.round(hoursUntil)} timmar`,
-          ...activeConditions.map(c => `Aktiv faktor: ${c}`),
+          `Previous occurrences: ${pattern.occurrences} times`,
+          `Expected time: in ${Math.round(hoursUntil)} hours`,
+          ...activeConditions.map(c => `Active factor: ${c}`),
         ],
         actions: actions.map((action, i) => ({
           id: `action_${i}`,
@@ -192,10 +192,10 @@ export class PatternDetectionService {
     const notification: Omit<NotificationData, 'id' | 'sentTime' | 'read'> = {
       type: 'early_pattern',
       priority: 'medium',
-      title: '💡 Mönster formar sig',
-      body: `${triggerCount} av ${Object.keys(pattern.conditions).length} faktorer som brukar leda till migrän är aktiva`,
+      title: '💡 Pattern Forming',
+      body: `${triggerCount} of ${Object.keys(pattern.conditions).length} factors that usually lead to migraines are active`,
       details: {
-        explanation: `Baserat på dina tidigare migräner har vi upptäckt att vissa faktorer ofta leder till migrän senare på dagen.`,
+        explanation: `Based on your previous migraines, we've detected that certain factors often lead to migraines later in the day.`,
         confidence: pattern.confidence,
         dataPoints: activeConditions,
         triggers: Object.entries(pattern.conditions).map(([name, active]) => ({
@@ -260,10 +260,10 @@ export class PatternDetectionService {
   private getTimeOfDay(time: string): string {
     const hour = parseInt(time.split(':')[0]);
 
-    if (hour >= 5 && hour < 12) return 'morgon';
-    if (hour >= 12 && hour < 17) return 'middag';
-    if (hour >= 17 && hour < 21) return 'kväll';
-    return 'natt';
+    if (hour >= 5 && hour < 12) return 'morning';
+    if (hour >= 12 && hour < 17) return 'afternoon';
+    if (hour >= 17 && hour < 21) return 'evening';
+    return 'night';
   }
 
   // Check if times are near each other
@@ -279,10 +279,10 @@ export class PatternDetectionService {
 
     // Map time of day to approximate hours
     const timeMap: { [key: string]: number } = {
-      morgon: 10,
-      middag: 14,
-      kväll: 19,
-      natt: 2,
+      morning: 10,
+      afternoon: 14,
+      evening: 19,
+      night: 2,
     };
 
     const expectedHour = timeMap[timeOfDay] || 12;
@@ -293,19 +293,19 @@ export class PatternDetectionService {
     return diff;
   }
 
-  // Get day name in Swedish
+  // Get day name in English
   private getDayName(dayOfWeek: number): string {
-    const days = ['Söndag', 'Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag'];
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     return days[dayOfWeek];
   }
 
-  // Get condition text in Swedish
+  // Get condition text in English
   private getConditionText(condition: string): string {
     const texts: { [key: string]: string } = {
-      lowActivity: 'du inte varit aktiv',
-      poorSleep: 'du sovit dåligt',
-      lowWater: 'du druckit lite vatten',
-      highStress: 'du haft hög stress',
+      lowActivity: 'you haven\'t been active',
+      poorSleep: 'you slept poorly',
+      lowWater: 'you drank little water',
+      highStress: 'you\'ve had high stress',
     };
     return texts[condition] || condition;
   }
@@ -315,18 +315,18 @@ export class PatternDetectionService {
     const actions: string[] = [];
 
     if (conditions.lowActivity) {
-      actions.push('Gå på en 20 minuters promenad nu');
+      actions.push('Take a 20-minute walk now');
     }
     if (conditions.lowWater) {
-      actions.push('Drick 2 glas vatten');
+      actions.push('Drink 2 glasses of water');
     }
     if (conditions.highStress) {
-      actions.push('Ta 10 minuters paus och andas djupt');
+      actions.push('Take a 10-minute break and breathe deeply');
     }
 
-    actions.push('Ta en förebyggande medicin');
-    actions.push('Använd Relivia enheten');
-    actions.push('Undvik starka ljus nästa timme');
+    actions.push('Take a preventative medication');
+    actions.push('Use your Relivia device');
+    actions.push('Avoid bright lights for the next hour');
 
     return actions.slice(0, 5); // Max 5 actions
   }
@@ -361,15 +361,15 @@ export class PatternDetectionService {
       const notification: Omit<NotificationData, 'id' | 'sentTime' | 'read'> = {
         type: 'positive_reinforcement',
         priority: 'low',
-        title: '🎉 Bra jobbat!',
-        body: `Du bröt ditt vanliga ${this.getDayName(currentDayOfWeek).toLowerCase()}smönster`,
+        title: '🎉 Great job!',
+        body: `You broke your typical ${this.getDayName(currentDayOfWeek).toLowerCase()} pattern`,
         details: {
-          explanation: 'Du gjorde något annorlunda idag och det fungerade!',
+          explanation: 'You did something different today and it worked!',
           confidence: bestPattern.confidence,
           dataPoints: [
-            'Du ändrade ditt vanliga beteende',
-            'Ingen migrän inträffade',
-            'Detta är värt att notera!',
+            'You changed your usual behavior',
+            'No migraine occurred',
+            'This is worth noting!',
           ],
         },
       };
